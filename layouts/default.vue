@@ -139,7 +139,7 @@ export default {
         isProd = !!(window.location.host.includes('ocha-dap')) || !!(window.location.host.includes('humdata'))
         this.$store.commit('setProd', isProd)
       }
-      return (isProd) ? 'IATI COVID-19 Funding Dashboard (South Sudan data)' : '*STAGE* IATI COVID-19 Funding Dashboard (South Sudan data)'
+      return (isProd) ? 'IATI COVID-19 Funding Dashboard (Climate data)' : '*STAGE* IATI COVID-19 Funding Dashboard (Climate data)'
     }
   },
   mounted () {
