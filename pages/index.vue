@@ -542,7 +542,7 @@ export default {
 
     // const dataPath = (this.isProd) ? 'https://ocha-dap.github.io/hdx-scraper-iati-viz/reporting_orgs.json' : 'https://mcarans.github.io/hdx-scraper-iati-viz/reporting_orgs.json'
 
-    const filePath = (config.dev) ? '' : '/viz-iati-south-sudan/'
+    const filePath = (config.dev) ? '' : '/viz-iati-climate/'
     const dataPath = filePath + 'reporting_orgs.json'
     axios.get(dataPath)
       .then((response) => {
@@ -581,7 +581,7 @@ export default {
   },
   methods: {
     async loadData () {
-      const filePath = (config.dev) ? '' : '/viz-iati-south-sudan/'
+      const filePath = (config.dev) ? '' : '/viz-iati-climate/'
       const dataPath = filePath + 'transactions.json'
       await axios.get(filePath + 'tooltips.csv')
         .then((response) => {
