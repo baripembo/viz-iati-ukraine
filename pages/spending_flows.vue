@@ -235,7 +235,7 @@ export default {
     // const dataPath = (this.isProd) ? 'https://ocha-dap.github.io/hdx-scraper-iati-viz/reporting_orgs.json' : 'https://mcarans.github.io/hdx-scraper-iati-viz/reporting_orgs.json'
 
     const filePath = (config.dev) ? '' : '/viz-iati-climate/'
-    const dataPath = filePath + 'reporting_orgs.json'
+    const dataPath = 'https://raw.githubusercontent.com/mcarans/iati_test_results/main/climate/reporting_orgs.json'
     axios.get(dataPath)
       .then((response) => {
         this.orgNameIndex = response.data.data
@@ -260,7 +260,7 @@ export default {
   methods: {
     async loadData () {
       const filePath = (config.dev) ? '' : '/viz-iati-climate/'
-      const dataPath = filePath + 'flows.json'
+      const dataPath = 'https://raw.githubusercontent.com/mcarans/iati_test_results/main/climate/flows.json'
       await axios.get(filePath + 'tooltips.csv')
         .then((response) => {
           return csvtojson().fromString(response.data).then((jsonData) => {
