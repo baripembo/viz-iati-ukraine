@@ -542,8 +542,8 @@ export default {
 
     // const dataPath = (this.isProd) ? 'https://ocha-dap.github.io/hdx-scraper-iati-viz/reporting_orgs.json' : 'https://mcarans.github.io/hdx-scraper-iati-viz/reporting_orgs.json'
 
-    const filePath = (config.dev) ? '' : '/viz-iati-climate/'
-    const dataPath = 'https://raw.githubusercontent.com/mcarans/iati_test_results/main/climate/reporting_orgs.json'
+    const filePath = (config.dev) ? '' : '/viz-iati-ukraine/'
+    const dataPath = 'https://raw.githubusercontent.com/OCHA-DAP/hdx-scraper-iati-viz/gh-pages/ukraine/reporting_orgs.json'
     axios.get(dataPath)
       .then((response) => {
         this.orgNameIndex = response.data.data
@@ -581,8 +581,8 @@ export default {
   },
   methods: {
     async loadData () {
-      const filePath = (config.dev) ? '' : '/viz-iati-climate/'
-      const dataPath = 'https://raw.githubusercontent.com/mcarans/iati_test_results/main/climate/transactions.json'
+      const filePath = (config.dev) ? '' : '/viz-iati-ukraine/'
+      const dataPath = 'https://raw.githubusercontent.com/OCHA-DAP/hdx-scraper-iati-viz/gh-pages/ukraine/transactions.json'
       await axios.get(filePath + 'tooltips.csv')
         .then((response) => {
           return csvtojson().fromString(response.data).then((jsonData) => {
