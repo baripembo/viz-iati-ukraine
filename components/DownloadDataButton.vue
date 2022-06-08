@@ -10,9 +10,6 @@
       <b-dropdown-item @click="downloadAllData()">
         View data on HDX
       </b-dropdown-item>
-      <b-dropdown-item @click="downloadFilteredData()">
-        View filtered data
-      </b-dropdown-item>
     </b-dropdown>
 
     <!--     <div class="text-center pt-2">

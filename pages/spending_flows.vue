@@ -52,15 +52,6 @@
                 >
               </template>
             </v-select>
-
-            <div class="quick-filter-list mb-3">
-              Quick filters:
-              <ul class="horizontal-list d-inline">
-                <li v-for="filter in quickFilters" :key="filter.id">
-                  <a :id="filter.id" href="#" :title="filter.name" @click="onQuickFilter">{{ filter.name }}</a>
-                </li>
-              </ul>
-            </div>
           </b-col>
           <b-col>
             <b-row>
@@ -170,15 +161,7 @@ export default {
       title: config.head.title,
       selectedFilterDimension: '#org+id+reporting',
       selectedFilter: '*',
-      selectedFilterLabel: 'all reporting organizations',
-      quickFilters: [
-        { name: 'Asian Development Bank', id: 'xm-dac-46004' },
-        { name: 'Inter-American Development Bank', id: 'xi-iati-iadb' },
-        { name: 'UNOCHA - Central Emergency Response Fund (CERF)', id: 'xm-ocha-cerf' },
-        { name: 'United Nations Development Programme', id: 'xm-dac-41114' },
-        { name: 'United States Agency for International Development (USAID)', id: 'us-gov-1' },
-        { name: 'World Food Programme', id: 'xm-dac-41140' }
-      ],
+      selectedFilterLabel: '',
       strictToggleOptions: [
         { label: 'Loose', value: 'off' },
         { label: 'Strict', value: 'on' }
@@ -220,6 +203,10 @@ export default {
         return org
       })
       return this.populateSelect(orgList, 'All reporting organizations')
+    },
+    orgCount () {
+      const orgs = [...new Set(this.fullData.map(item => item['#org+id+reporting']))]
+      return orgs.length
     }
   },
   updated () {
@@ -232,9 +219,6 @@ export default {
     }
     this.filterParams['#org+id+reporting'] = this.selectedFilter
 
-    // const dataPath = (this.isProd) ? 'https://ocha-dap.github.io/hdx-scraper-iati-viz/reporting_orgs.json' : 'https://mcarans.github.io/hdx-scraper-iati-viz/reporting_orgs.json'
-
-    const filePath = (config.dev) ? '' : '/viz-iati-ukraine/'
     const dataPath = 'https://raw.githubusercontent.com/OCHA-DAP/hdx-scraper-iati-viz/gh-pages/ukraine/reporting_orgs.json'
     axios.get(dataPath)
       .then((response) => {
@@ -278,6 +262,12 @@ export default {
 
           this.fullData = response.data.data
           this.updateFilteredData()
+
+          // set intitial filter label
+          if (Object.keys(this.$route.query).length < 1) {
+            const count = this.orgCount
+            this.selectedFilterLabel = count + ' reporting organizations'
+          }
         })
     },
     urlQuery () {
@@ -357,7 +347,7 @@ export default {
       if (value !== '*') {
         this.selectedFilterLabel = this.getOrgName(value)
       } else {
-        this.selectedFilterLabel = 'all reporting organizations'
+        this.selectedFilterLabel = this.orgCount + ' reporting organizations'
       }
       this.updateFilteredData()
       // this.$mixpanelTrackAction('change content', 'Spending Flows Breakdown select filter', value)
@@ -366,10 +356,6 @@ export default {
       this.filterParams[event.target.parentElement.id] = event.target.value
       this.updateFilteredData()
       // this.$mixpanelTrackAction('change content', 'Spending Flows Breakdown toggle filter', event.target.parentElement.id + ' ' + event.target.value)
-    },
-    onQuickFilter (event) {
-      event.preventDefault()
-      this.onSelect(event.target.id)
     },
     populateSelect (data, defaultValue) {
       const selectList = data.reduce((itemList, item) => {

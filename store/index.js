@@ -11,7 +11,7 @@ export const mutations = {
       return summary
     }, {})
   },
-  setorgNameIndex (state, orgNameIndex) {
+  setOrgNameIndex (state, orgNameIndex) {
     state.orgNameIndex = orgNameIndex
   },
   setProd (state, isProd) {

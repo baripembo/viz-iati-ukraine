@@ -12,7 +12,7 @@
       <div class="header-sticky">
         <div class="container">
           <h2>
-            Transactions from <b>{{ numberFormatter(activityCount) }}</b> <span v-if="activityCount > 1 || activityCount===0">activities</span><span v-else>activity</span> by <b>{{ selectedFilterLabel }}</b>
+            <b>{{ numberFormatter(activityCount) }}</b> <span v-if="activityCount > 1 || activityCount===0">transactions</span><span v-else>transaction</span> by <b>{{ selectedFilterLabel }}</b>
           </h2>
           <a class="anchor" @click="scrollTo('filters')">Customize filters</a>
         </div>
@@ -118,20 +118,11 @@
                 >
               </template>
             </v-select>
-
-            <div class="quick-filter-list">
-              Quick filters:
-              <ul class="horizontal-list d-inline">
-                <li v-for="filter in quickFilters[getFilterID(selectedFilterDimension)]" :key="filter.id">
-                  <a :id="filter.id" href="#" :title="filter.name" @click="onQuickFilter">{{ filter.name }}</a>
-                </li>
-              </ul>
-            </div>
           </b-col>
           <b-col>
             <b-row>
               <b-col>
-                Filter for COVID-19 related transactions
+                Filter for HRP related transactions
                 <b-badge
                   v-b-tooltip.hover
                   class="info-icon p-0"
@@ -345,11 +336,11 @@ export default {
       initFilterOption: '#org+id',
       selectedFilterDimension: '#org+id',
       selectedFilter: '*',
-      selectedFilterLabel: 'all publishing organizations',
+      selectedFilterLabel: '',
       filterOptions: [
-        { text: 'By Publishing Organization', value: '#org+id', label: 'all publishing organizations' },
-        { text: 'By Recipient Country or Region', value: '#country', label: 'all recipient countries and regions' },
-        { text: 'By Sector', value: '#sector', label: 'all sectors' }
+        { text: 'By Publishing Organization', value: '#org+id', label: 'publishing organizations' },
+        { text: 'By Recipient Country or Region', value: '#country', label: 'recipient countries and regions' },
+        { text: 'By Sector', value: '#sector', label: 'sectors' }
       ],
       selectedRankingFilter: '#country',
       rankingFilter: [
@@ -371,30 +362,6 @@ export default {
         'Cumulative and Monthly Commitments/Spending',
         'Cumulative Commitments/Spending',
         'Monthly Commitments/Spending'
-      ],
-      quickFilters: [
-        [
-          { name: 'Asian Development Bank', id: 'xm-dac-46004' },
-          { name: 'Inter-American Development Bank', id: 'xi-iati-iadb' },
-          { name: 'UNOCHA - Central Emergency Response Fund (CERF)', id: 'xm-ocha-cerf' },
-          { name: 'United Nations Development Programme', id: 'xm-dac-41114' },
-          { name: 'United States Agency for International Development (USAID)', id: 'us-gov-1' },
-          { name: 'World Food Programme', id: 'xm-dac-41140' }
-        ],
-        [
-          { name: 'India', id: 'India' },
-          { name: 'Brazil', id: 'Brazil' },
-          { name: 'Afghanistan', id: 'Afghanistan' },
-          { name: 'Bangladesh', id: 'Bangladesh' },
-          { name: 'South Sudan', id: 'South Sudan' }
-        ],
-        [
-          { name: 'Emergency Response', id: 'Emergency Response' },
-          { name: 'Health', id: 'Health' },
-          { name: 'Education', id: 'Education' },
-          { name: 'Reconstruction Relief & Rehabilitation', id: 'Reconstruction Relief & Rehabilitation' },
-          { name: 'Transport & Storage', id: 'Transport & Storage' }
-        ]
       ],
       strictToggleOptions: [
         { label: 'Loose', value: 'off' },
@@ -473,6 +440,18 @@ export default {
     spendingRanked () {
       return this.getRankedList(this.spending)
     },
+    orgCount () {
+      const orgs = [...new Set(this.fullData.map(item => item['#org+id']))]
+      return orgs.length
+    },
+    countryCount () {
+      const countries = [...new Set(this.fullData.map(item => item['#country']))]
+      return countries.length
+    },
+    sectorCount () {
+      const sector = [...new Set(this.fullData.map(item => item['#sector']))]
+      return sector.length
+    },
     activityCount () {
       const activities = [...new Set(this.filteredData.map(item => item['#activity+code']))]
       return activities.length
@@ -540,14 +519,13 @@ export default {
     this.filterParams['#country'] = '*'
     this.filterParams['#sector'] = '*'
 
-    // const dataPath = (this.isProd) ? 'https://ocha-dap.github.io/hdx-scraper-iati-viz/reporting_orgs.json' : 'https://mcarans.github.io/hdx-scraper-iati-viz/reporting_orgs.json'
-
-    const filePath = (config.dev) ? '' : '/viz-iati-ukraine/'
     const dataPath = 'https://raw.githubusercontent.com/OCHA-DAP/hdx-scraper-iati-viz/gh-pages/ukraine/reporting_orgs.json'
     axios.get(dataPath)
       .then((response) => {
         this.orgNameIndex = response.data.data
-        this.$store.commit('setorgNameIndex', response.data.data)
+        this.$store.commit('setOrgNameIndex', response.data.data)
+
+        // this.selectedFilterLabel = this.orgNameIndex.length + ' publishing organizations'
 
         this.$nextTick(() => {
           if ('org' in this.$route.query) {
@@ -600,8 +578,13 @@ export default {
 
           // process the transaction data
           this.fullData = response.data.data
-
           this.filteredData = this.filterData()
+
+          // set intitial filter label
+          if (Object.keys(this.$route.query).length < 1) {
+            const count = this.orgCount
+            this.selectedFilterLabel = count + ' publishing organizations'
+          }
         })
     },
     urlQuery () {
@@ -669,10 +652,6 @@ export default {
       this.updateFilteredData()
       // this.$mixpanelTrackAction('change content', 'Commitments and Spending Breakdown toggle filter', event.target.parentElement.id + ' ' + event.target.value)
     },
-    onQuickFilter (event) {
-      event.preventDefault()
-      this.onSelect(event.target.id)
-    },
     onSelectRanking (value) {
       // this.$mixpanelTrackAction('change content', 'Commitments and Spending Ranking select filter', value)
     },
@@ -681,7 +660,17 @@ export default {
     },
     setDefaultFilterLabel (dimension) {
       const filterOption = this.filterOptions.filter(option => option.value === dimension)
-      this.selectedFilterLabel = filterOption[0].label.toLowerCase()
+      // this.selectedFilterLabel = filterOption[0].label.toLowerCase()
+
+      let count = ''
+      if (dimension === '#org+id') {
+        count = this.orgCount
+      } else if (dimension === '#country') {
+        count = this.countryCount
+      } else {
+        count = this.sectorCount
+      }
+      this.selectedFilterLabel = count + ' ' + filterOption[0].label.toLowerCase()
     },
     updateFilteredData () {
       this.filteredData = this.filterData()
