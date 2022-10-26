@@ -7,9 +7,9 @@
       class="download-button"
       variant="outline-dark"
       @click="onClick($event)">
-      <b-dropdown-item @click="downloadAllData()">
+      <!-- <b-dropdown-item @click="downloadAllData()">
         View data on HDX
-      </b-dropdown-item>
+      </b-dropdown-item> -->
       <b-dropdown-item @click="downloadFilteredData()">
         View filtered data
       </b-dropdown-item>
