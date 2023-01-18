@@ -17,11 +17,11 @@
               Spending Flows
             </b-nav-item>
           </b-navbar-nav>
-          <b-navbar-nav class="ml-auto">
+<!--           <b-navbar-nav class="ml-auto">
             <b-nav-item :to="{name: 'about'}" active-class="active" class="ml-lg-auto nav-about" no-prefetch @click="onClick('About this Dashboard')">
               About this Dashboard
             </b-nav-item>
-          </b-navbar-nav>
+          </b-navbar-nav> -->
         </b-collapse>
       </b-navbar>
       <nuxt class="main-content" />
@@ -30,7 +30,6 @@
         <b-row>
           <b-col cols="12">
             <div class="logo-container">
-              <a href="https://www.usaid.gov" target="_blank"><img src="~@/assets/logos/usaid.png" alt="USAID" height="60"></a>
               <a href="https://www.unocha.org" target="_blank"><img src="~@/assets/logos//ocha.png" alt="UN OCHA" height="50"></a>
               <a href="https://centre.humdata.org" target="_blank"><img src="~@/assets/logos/centrehumdata.png" alt="Centre for Humanitarian Data" height="45"></a>
               <a href="https://iatistandard.org" target="_blank"><img src="~@/assets/logos/iati.png" alt="Powered by IATI" height="50"></a>
@@ -116,7 +115,7 @@
 </style>
 
 <script>
-// import mixpanel from 'mixpanel-browser'
+import mixpanel from 'mixpanel-browser'
 import config from '../nuxt.config'
 import OchaHeader from '~/components/OchaHeader'
 
@@ -140,13 +139,13 @@ export default {
     }
   },
   mounted () {
-    // const MIXPANEL_TOKEN = this.$store.state.isProd ? process.env.NUXT_ENV_MIXPANEL_TOKEN_PROD : process.env.NUXT_ENV_MIXPANEL_TOKEN_DEV
-    // mixpanel.init(MIXPANEL_TOKEN)
-    // this.$mixpanelTrackView()
+    const MIXPANEL_TOKEN = this.$store.state.isProd ? process.env.NUXT_ENV_MIXPANEL_TOKEN_PROD : process.env.NUXT_ENV_MIXPANEL_TOKEN_DEV
+    mixpanel.init(MIXPANEL_TOKEN)
+    this.$mixpanelTrackView()
   },
   methods: {
     onClick (page) {
-      // this.$mixpanelTrackAction('switch viz', config.head.title, page)
+      this.$mixpanelTrackAction('switch viz', config.head.title, page)
     }
   }
 }

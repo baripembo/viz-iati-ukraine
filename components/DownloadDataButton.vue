@@ -7,8 +7,11 @@
       class="download-button"
       variant="outline-dark"
       @click="onClick($event)">
-      <b-dropdown-item @click="downloadAllData()">
+      <!-- <b-dropdown-item @click="downloadAllData()">
         View data on HDX
+      </b-dropdown-item> -->
+      <b-dropdown-item @click="downloadFilteredData()">
+        View filtered data
       </b-dropdown-item>
     </b-dropdown>
 
@@ -83,7 +86,7 @@ export default {
     proxyLinkTransactions (selectionValue, selectionType, isHumanitarian, isStrict) {
       // the GET parameters that we'll pass to the HXL Proxy
       const params = {
-        url: 'https://ocha-dap.github.io/hdx-scraper-iati-viz/transactions.csv'
+        url: 'https://ocha-dap.github.io/hdx-scraper-iati-viz/ukraine/transactions.csv'
       }
 
       // filter rows by the primary selector (a single org, sector, or country)
@@ -143,7 +146,7 @@ export default {
     proxyLinkFlows (reportingOrgId, isHumanitarian, isStrict) {
       // the GET parameters that we'll pass to the HXL Proxy
       const params = {
-        url: 'https://ocha-dap.github.io/hdx-scraper-iati-viz/flows.csv'
+        url: 'https://ocha-dap.github.io/hdx-scraper-iati-viz/ukraine/flows.csv'
       }
 
       // filter rows by the reporting org id (if supplied)
